@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PumpFun Analyst</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="banner">
+        <div class="banner-content">
+            <div class="banner-logo">PumpFun Analyst</div>
+            <div class="banner-buttons">
+                <a href="https://pump.fun/board" target="_blank" class="banner-btn buy-btn">Buy Now</a>
+                <a href="https://x.com/pumpfunanalyst" target="_blank" class="banner-btn social-btn">
+                    <svg class="social-icon" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
+                    </svg>
+                </a>
+                <a href="https://t.me/Pumpfunanalyst" target="_blank" class="banner-btn social-btn">
+                    <svg class="social-icon" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <section id="input-section">
+            <div class="search-container">
+                <input type="text" id="coin-address" placeholder="Enter coin address...">
+                <button onclick="analyzeCoin()">Analyze</button>
+            </div>
+        </section>
+
+        <section id="results">
+            <div class="coin-info">
+                <h2>It's Time to Full Port</h2>
+                <div class="coin-image">
+                    <img src="images/fullport.png" alt="Full Port Coin" />
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h3>Volume (24h)</h3>
+                    <p id="volume">$4,827,647</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Holders</h3>
+                    <p id="holders">8,953</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Fresh Wallets</h3>
+                    <p id="fresh-wallets">284 (24h)</p>
+                </div>
+                <div class="metric-card potential">
+                    <h3>Coin Potential</h3>
+                    <p id="potential" class="good">Good</p>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Price History</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Holder Distribution</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 PumpFun Analyst. All rights reserved.</p>
+    </footer>
+
+    <!-- Move scripts to end of body -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script>
+        let priceChart = null;
+        let distributionChart = null;
+
+        // Initial chart setup
+        document.addEventListener('DOMContentLoaded', function() {
+            setupCharts();
+        });
+
+        function setupCharts() {
+            // Price History Chart
+            const priceCtx = document.getElementById('priceChart').getContext('2d');
+            priceChart = new Chart(priceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['0min', '30min', '60min', '90min', '120min'],
+                    datasets: [{
+                        label: 'Price',
+                        data: [0, 5000000, 13000000, 17000000, 14700000],
+                        borderColor: '#007bff',
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000000) + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Distribution Chart
+            const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Large Holders (≥1%) - 8 wallets',
+                        'Medium Holders (≥0.4%) - 30 wallets',
+                        'Small Holders (<0.4%) - 8,922 wallets'
+                    ],
+                    datasets: [{
+                        data: [8, 30, 8922],
+                        backgroundColor: ['#2ecc71', '#3498db', '#9b59b6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${value.toLocaleString()} wallets (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function analyzeCoin() {
+            const address = document.getElementById('coin-address').value;
+            if (!address) {
+                alert('Please enter a coin address');
+                return;
+            }
+
+            // Hide the initial coin info section
+            const coinInfo = document.querySelector('.coin-info');
+            coinInfo.style.display = 'none';
+
+            // Generate random volume (between $2M and $8M)
+            const newVolume = getRandomNumber(2000000, 8000000);
+            document.getElementById('volume').textContent = '$' + newVolume.toLocaleString();
+
+            // Generate random holders (between 5000 and 12000)
+            const totalHolders = getRandomNumber(5000, 12000);
+            document.getElementById('holders').textContent = totalHolders.toLocaleString();
+
+            // Generate random fresh wallets (between 100 and 500)
+            const freshWallets = getRandomNumber(100, 500);
+            document.getElementById('fresh-wallets').textContent = freshWallets.toLocaleString() + ' (24h)';
+
+            // Random potential status
+            const potentialElement = document.getElementById('potential');
+            const random = Math.random();
+            if (random < 0.33) {
+                potentialElement.textContent = 'Good';
+                potentialElement.className = 'good';
+            } else if (random < 0.66) {
+                potentialElement.textContent = 'Has Potential';
+                potentialElement.className = 'potential';
+            } else {
+                potentialElement.textContent = 'Bad';
+                potentialElement.className = 'bad';
+            }
+
+            // Generate new price history data
+            const newPriceData = [0];
+            for (let i = 1; i < 5; i++) {
+                newPriceData.push(getRandomNumber(2000000, 20000000));
+            }
+            priceChart.data.datasets[0].data = newPriceData;
+            priceChart.update();
+
+            // Generate new distribution data
+            const largeHolders = getRandomNumber(5, 15);
+            const mediumHolders = getRandomNumber(20, 40);
+            const smallHolders = totalHolders - largeHolders - mediumHolders;
+
+            distributionChart.data.labels = [
+                `Large Holders (≥1%) - ${largeHolders} wallets`,
+                `Medium Holders (≥0.4%) - ${mediumHolders} wallets`,
+                `Small Holders (<0.4%) - ${smallHolders} wallets`
+            ];
+            distributionChart.data.datasets[0].data = [largeHolders, mediumHolders, smallHolders];
+            distributionChart.update();
+        }
+    </script>
+</body>
+</html> 
